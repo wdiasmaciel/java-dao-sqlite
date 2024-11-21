@@ -51,7 +51,7 @@ public class UsuarioDAO {
             connection = connectionFactory.createConnection();
 
             // Criar um preparedStatement baseado em uma string SQL:
-            String insertSQL = "INSERT INTO usuario (nome, nascimnto) values (?, ?)";
+            String insertSQL = "INSERT INTO usuario (nome, nascimento) values (?, ?)";
             preparedStatement = connection.prepareStatement(insertSQL);
 
             // Preencher os valores no PreparedStatement:
