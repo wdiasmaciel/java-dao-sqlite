@@ -138,6 +138,7 @@ public class UsuarioDAO {
             resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 usuario = new Usuario();
+                usuario.setId(resultSet.getInt("id"));
                 usuario.setNome(resultSet.getString("nome"));
                 usuario.setNascimento(resultSet.getString("nascimento"));
                 System.out.println(
