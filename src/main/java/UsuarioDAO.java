@@ -1,4 +1,5 @@
 import java.sql.SQLException;
+import java.sql.Connection;
 
 public class UsuarioDAO {
     public Usuario create(Usuario usuario) {
