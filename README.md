@@ -1,4 +1,4 @@
-# java-dao-sqlite
+# java-sqlite-05-dao
 
 1) Criar um repositório público para o projeto no `GitHub`. Ao criar o projeto, marcar as opções `Public` e `Add a README file`. No item `Add .gitignore`, selecionar a opção `Maven`. Em seguida, clicar no botão `Code` e iniciar um `Codespace` clicando em `Create a codespace on main`.
 
@@ -19,7 +19,7 @@ public class Usuario {
 
     public Usuario(){}
 
-    public String getId() {return this.id;}
+    public int getId() {return this.id;}
     public void setId(int id) {this.id = id;}
 
     public String getNome() {return this.nome;}
@@ -41,16 +41,16 @@ public class ConnectionFactory {
     public ConnectionFactory() {
     }
 
-    public Connection createConnection() throws SQLException {
+    public Connection createConnection() {
         try {
             // Conectar ao banco de dados SQLite:
-            connection = DriverManager.getConnection("jdbc:sqlite:teste.db");
+            this.connection = DriverManager.getConnection("jdbc:sqlite:teste.db");
             System.out.println("Conexão com SQLite estabelecida!");
-        } catch (ClassNotFoundException e) {
+        } catch (Exception e) {
             System.err.println("Não foi possível estabelecer conexão com SQLite!");
             e.printStackTrace();
         }
-        return connection;    
+        return this.connection;    
     }
 }
 ```
@@ -58,17 +58,59 @@ public class ConnectionFactory {
 6) Criar o arquivo `UsuarioDAO.java` dentro de `src/main/java` com o conteúdo abaixo:
 ```java
 import java.sql.SQLException;
+import java.sql.Connection;
+import java.sql.Statement;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 public class UsuarioDAO {
-    public Usuario create(Usuario usuario) {
+    public void createTable() {
+        Connection connection = null;
+        Statement statement = null;
+
         try {
             // Utilizar a fábrica de conexões para criar uma Connection SQL:
             ConnectionFactory connectionFactory = new ConnectionFactory();
-            Connection connection = connectionFactory.createConnection();
+            connection = connectionFactory.createConnection();
+
+            // Criar um statement baseado em uma string SQL:
+            String createTableSQL = """
+                      CREATE TABLE IF NOT EXISTS usuario (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        nome VARCHAR(256) NOT NULL,
+                        nascimento TEXT
+                      );
+                    """;
+            statement = connection.createStatement();
+            statement.execute(createTableSQL);
+            System.out.println("Tabela 'usuario' criada ou já existe!");
+        } catch (SQLException e) {
+            System.err.println("Erro na comunicação com o banco de dados!");
+            e.printStackTrace();
+        } finally {
+            try {
+                if (statement != null)
+                    statement.close();
+                if (connection != null)
+                    connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public Usuario create(Usuario usuario) {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+
+        try {
+            // Utilizar a fábrica de conexões para criar uma Connection SQL:
+            ConnectionFactory connectionFactory = new ConnectionFactory();
+            connection = connectionFactory.createConnection();
 
             // Criar um preparedStatement baseado em uma string SQL:
-            String insertSQL = "INSERT INTO usuario (nome, nascimnto) values (?, ?)";
-            PreparedStatement preparedStatement = connection.prepareStatement(insertSQL);
+            String insertSQL = "INSERT INTO usuario (nome, nascimento) values (?, ?)";
+            preparedStatement = connection.prepareStatement(insertSQL);
 
             // Preencher os valores no PreparedStatement:
             preparedStatement.setString(1, usuario.getNome());
@@ -76,36 +118,43 @@ public class UsuarioDAO {
 
             // Executar o comando SQL:
             preparedStatement.execute();
-            usuario.setId(readLastInsertedId(connection));
+            usuario.setId(this.readLastInsertedId(connection));
 
             System.out.println(
-                    "\n USUÁRIO: " +
-                            "\n ID: " + usuario.getID() +
-                            "\n NOME:" + usuario.getNome() +
-                            "\n DATA DE NASCIMENTO: " + usuario.getNascimento() +
-                            "\n foi gravado no banco de dados.");
+                    "USUÁRIO GRAVADO NO BANCO DE DADOS: " +
+                            "\nID: " + usuario.getId() +
+                            "\nNOME: " + usuario.getNome() +
+                            "\nDATA DE NASCIMENTO: " + usuario.getNascimento());
         } catch (SQLException e) {
             System.err.println("Erro na comunicação com o banco de dados!");
             e.printStackTrace();
         } finally {
-            preparedStatement.close();
-            connection.close();
+            try {
+                if (preparedStatement != null)
+                    preparedStatement.close();
+                if (connection != null)
+                    connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return usuario;
     }
 
     public int readLastInsertedId(Connection connection) {
         int lastInsertedId = -1;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
 
         try {
             // Criar um preparedStatement baseado em uma string SQL:
             String selectSQL = "SELECT MAX(id) AS max_id FROM usuario";
-            PreparedStatement preparedStatement = connection.prepareStatement(selectSQL);
+            preparedStatement = connection.prepareStatement(selectSQL);
 
             // Executar o comando SQL:
-            ResultSet resultSet = preparedStatement.executeQuery();
+            resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
-                lastInsertedId = resultSet.getString("max_id");
+                lastInsertedId = resultSet.getInt("max_id");
             } else {
                 System.out.println("Não foi possível recuperar o último identificador gerado pelo banco de dados!");
             }
@@ -113,39 +162,48 @@ public class UsuarioDAO {
             System.err.println("Erro na comunicação com o banco de dados!");
             e.printStackTrace();
         } finally {
-            resultSet.close();
-            preparedStatement.close();
-            connection.close();
+            try {
+                if (resultSet != null)
+                    resultSet.close();
+                if (preparedStatement != null)
+                    preparedStatement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return lastInsertedId;
     }
 
     public Usuario read(int id) {
         Usuario usuario = null;
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
 
         try {
             // Utilizar a fábrica de conexões para criar uma Connection SQL:
             ConnectionFactory connectionFactory = new ConnectionFactory();
-            Connection connection = connectionFactory.createConnection();
+            connection = connectionFactory.createConnection();
 
             // Criar um preparedStatement baseado em uma string SQL:
-            String selectSQL = "SELECT * FROM aluno WHERE id = ?";
-            PreparedStatement preparedStatement = connection.prepareStatement(selectSQL);
+            String selectSQL = "SELECT * FROM usuario WHERE id = ?";
+            preparedStatement = connection.prepareStatement(selectSQL);
 
             // Preencher o valor do identificador no PreparedStatement:
             preparedStatement.setInt(1, id);
 
             // Executar o comando SQL:
-            ResultSet resultSet = preparedStatement.executeQuery();
+            resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 usuario = new Usuario();
+                usuario.setId(resultSet.getInt("id"));
                 usuario.setNome(resultSet.getString("nome"));
                 usuario.setNascimento(resultSet.getString("nascimento"));
                 System.out.println(
-                        "\n USUÁRIO: " +
-                                "\n ID: " + usuario.getID() +
-                                "\n NOME:" + usuario.getNome() +
-                                "\n DATA DE NASCIMENTO: " + usuario.getNascimento());
+                        "USUÁRIO LIDO DO BANCO DE DADOS: " +
+                                "\nID: " + usuario.getId() +
+                                "\nNOME: " + usuario.getNome() +
+                                "\nDATA DE NASCIMENTO: " + usuario.getNascimento());
             } else {
                 System.out.println("Usuário não encontrado!");
             }
@@ -153,22 +211,32 @@ public class UsuarioDAO {
             System.err.println("Erro na comunicação com o banco de dados!");
             e.printStackTrace();
         } finally {
-            resultSet.close();
-            preparedStatement.close();
-            connection.close();
+            try {
+                if (resultSet != null)
+                    resultSet.close();
+                if (preparedStatement != null)
+                    preparedStatement.close();
+                if (connection != null)
+                    connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return usuario;
     }
 
     public void update(Usuario usuario) {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+
         try {
             // Utilizar a fábrica de conexões para criar uma Connection SQL:
             ConnectionFactory connectionFactory = new ConnectionFactory();
-            Connection connection = connectionFactory.createConnection();
+            connection = connectionFactory.createConnection();
 
             // Criar um preparedStatement baseado em uma string SQL:
-            String updateSQL = "UPDATE aluno SET nome = ?, nascimento = ? WHERE id = ?";
-            PreparedStatement preparedStatement = connection.prepareStatement(updateSQL);
+            String updateSQL = "UPDATE usuario SET nome = ?, nascimento = ? WHERE id = ?";
+            preparedStatement = connection.prepareStatement(updateSQL);
 
             // Preencher os valores no PreparedStatement:
             preparedStatement.setString(1, usuario.getNome());
@@ -183,20 +251,29 @@ public class UsuarioDAO {
             System.err.println("Erro na comunicação com o banco de dados!");
             e.printStackTrace();
         } finally {
-            preparedStatement.close();
-            connection.close();
+            try {
+                if (preparedStatement != null)
+                    preparedStatement.close();
+                if (connection != null)
+                    connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     public void delete(Usuario usuario) {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+
         try {
             // Utilizar a fábrica de conexões para criar uma Connection SQL:
             ConnectionFactory connectionFactory = new ConnectionFactory();
-            Connection connection = connectionFactory.createConnection();
+            connection = connectionFactory.createConnection();
 
             // Criar um preparedStatement baseado em uma string SQL:
-            String deleteSQL = "DELETE FROM aluno WHERE id = ?";
-            PreparedStatement preparedStatement = connection.prepareStatement(deleteSQL);
+            String deleteSQL = "DELETE FROM usuario WHERE id = ?";
+            preparedStatement = connection.prepareStatement(deleteSQL);
 
             // Preencher os valores no PreparedStatement:
             preparedStatement.setInt(1, usuario.getId());
@@ -204,13 +281,19 @@ public class UsuarioDAO {
             // Executar o comando SQL:
             preparedStatement.execute();
 
-            System.out.println("O aluno " + a.getNome() + " foi removido do BD.");
+            System.out.println("O usuario " + usuario.getNome() + " foi removido do BD.");
         } catch (SQLException e) {
             System.err.println("Erro na comunicação com o banco de dados!");
             e.printStackTrace();
         } finally {
-            preparedStatement.close();
-            connection.close();
+            try {
+                if (preparedStatement != null)
+                    preparedStatement.close();
+                if (connection != null)
+                    connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
@@ -223,6 +306,9 @@ public class Main {
         // Criar o DAO para conexão com o banco de dados:
         UsuarioDAO usuarioDAO = new UsuarioDAO();
 
+        //Criar a tabela usuario no banco de dados:
+        usuarioDAO.createTable();
+        
         // Criar um usuario:
         Usuario usuario = new Usuario();
         usuario.setNome("Ana");
@@ -232,7 +318,7 @@ public class Main {
         usuario = usuarioDAO.create(usuario);
 
         // Ler as informações cadastradas no banco de dados:
-        alunoDAO.read(usuario.getId());
+        usuarioDAO.read(usuario.getId());
 
         // Atualizar as informações do usuario:
         usuario.setNome("Ana Silva"); 
@@ -251,7 +337,7 @@ public class Main {
 ```
 
 8) No `Codespace`, instalar a extensão (_plugin_) VS Code `Extension Pack for Java`:
-![alt text](ExtensionPackForJava.png)
+![Alt: Extension Pack for Java.](ExtensionPackForJava.png)
 
 9) Criar o arquivo `pom.xml` com o conteúdo abaixo para projetos que usam `Maven` no diretório raiz do projeto:
 ```xml
