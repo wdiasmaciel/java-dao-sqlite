@@ -5,7 +5,7 @@ public class Usuario {
 
     public Usuario(){}
 
-    public String getId() {return this.id;}
+    public int getId() {return this.id;}
     public void setId(int id) {this.id = id;}
 
     public String getNome() {return this.nome;}
