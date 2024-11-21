@@ -16,14 +16,13 @@ public class UsuarioDAO {
             connection = connectionFactory.createConnection();
 
             // Criar um statement baseado em uma string SQL:
-            String createTableSQL = 
-            """
-              CREATE TABLE IF NOT EXISTS usuario (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                nome VARCHAR(256) NOT NULL,
-                nascimento TEXT
-              );
-            """;
+            String createTableSQL = """
+                      CREATE TABLE IF NOT EXISTS usuario (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        nome VARCHAR(256) NOT NULL,
+                        nascimento TEXT
+                      );
+                    """;
             statement = connection.createStatement();
             statement.execute(createTableSQL);
             System.out.println("Tabela 'usuario' criada ou já existe!");
@@ -32,8 +31,10 @@ public class UsuarioDAO {
             e.printStackTrace();
         } finally {
             try {
-                statement.close();
-                connection.close();
+                if (statement != null)
+                    statement.close();
+                if (connection != null)
+                    connection.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -72,8 +73,10 @@ public class UsuarioDAO {
             e.printStackTrace();
         } finally {
             try {
-                preparedStatement.close();
-                connection.close();
+                if (preparedStatement != null)
+                    preparedStatement.close();
+                if (connection != null)
+                    connection.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -103,8 +106,10 @@ public class UsuarioDAO {
             e.printStackTrace();
         } finally {
             try {
-                resultSet.close();
-                preparedStatement.close();
+                if (resultSet != null)
+                    resultSet.close();
+                if (preparedStatement != null)
+                    preparedStatement.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -149,9 +154,12 @@ public class UsuarioDAO {
             e.printStackTrace();
         } finally {
             try {
-                resultSet.close();
-                preparedStatement.close();
-                connection.close();
+                if (resultSet != null)
+                    resultSet.close();
+                if (preparedStatement != null)
+                    preparedStatement.close();
+                if (connection != null)
+                    connection.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -186,8 +194,10 @@ public class UsuarioDAO {
             e.printStackTrace();
         } finally {
             try {
-                preparedStatement.close();
-                connection.close();
+                if (preparedStatement != null)
+                    preparedStatement.close();
+                if (connection != null)
+                    connection.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -219,8 +229,10 @@ public class UsuarioDAO {
             e.printStackTrace();
         } finally {
             try {
-                preparedStatement.close();
-                connection.close();
+                if (preparedStatement != null)
+                    preparedStatement.close();
+                if (connection != null)
+                    connection.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
