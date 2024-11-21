@@ -2,6 +2,7 @@ import java.sql.SQLException;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 public class UsuarioDAO {
     public Usuario create(Usuario usuario) {
@@ -80,7 +81,7 @@ public class UsuarioDAO {
             connection = connectionFactory.createConnection();
 
             // Criar um preparedStatement baseado em uma string SQL:
-            String selectSQL = "SELECT * FROM aluno WHERE id = ?";
+            String selectSQL = "SELECT * FROM usuario WHERE id = ?";
             preparedStatement = connection.prepareStatement(selectSQL);
 
             // Preencher o valor do identificador no PreparedStatement:
@@ -121,7 +122,7 @@ public class UsuarioDAO {
             connection = connectionFactory.createConnection();
 
             // Criar um preparedStatement baseado em uma string SQL:
-            String updateSQL = "UPDATE aluno SET nome = ?, nascimento = ? WHERE id = ?";
+            String updateSQL = "UPDATE usuario SET nome = ?, nascimento = ? WHERE id = ?";
             preparedStatement = connection.prepareStatement(updateSQL);
 
             // Preencher os valores no PreparedStatement:
@@ -152,7 +153,7 @@ public class UsuarioDAO {
             connection = connectionFactory.createConnection();
 
             // Criar um preparedStatement baseado em uma string SQL:
-            String deleteSQL = "DELETE FROM aluno WHERE id = ?";
+            String deleteSQL = "DELETE FROM usuario WHERE id = ?";
             preparedStatement = connection.prepareStatement(deleteSQL);
 
             // Preencher os valores no PreparedStatement:
@@ -161,7 +162,7 @@ public class UsuarioDAO {
             // Executar o comando SQL:
             preparedStatement.execute();
 
-            System.out.println("O aluno " + a.getNome() + " foi removido do BD.");
+            System.out.println("O usuario " + usuario.getNome() + " foi removido do BD.");
         } catch (SQLException e) {
             System.err.println("Erro na comunicação com o banco de dados!");
             e.printStackTrace();
