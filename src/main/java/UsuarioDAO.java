@@ -60,7 +60,7 @@ public class UsuarioDAO {
 
             // Executar o comando SQL:
             preparedStatement.execute();
-            usuario.setId(readLastInsertedId(connection));
+            usuario.setId(this.readLastInsertedId(connection));
 
             System.out.println(
                     "USUÁRIO GRAVADO NO BANCO DE DADOS: " +
