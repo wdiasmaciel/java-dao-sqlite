@@ -3,14 +3,17 @@ import java.sql.Connection;
 
 public class UsuarioDAO {
     public Usuario create(Usuario usuario) {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+
         try {
             // Utilizar a fábrica de conexões para criar uma Connection SQL:
             ConnectionFactory connectionFactory = new ConnectionFactory();
-            Connection connection = connectionFactory.createConnection();
+            connection = connectionFactory.createConnection();
 
             // Criar um preparedStatement baseado em uma string SQL:
             String insertSQL = "INSERT INTO usuario (nome, nascimnto) values (?, ?)";
-            PreparedStatement preparedStatement = connection.prepareStatement(insertSQL);
+            preparedStatement = connection.prepareStatement(insertSQL);
 
             // Preencher os valores no PreparedStatement:
             preparedStatement.setString(1, usuario.getNome());
@@ -38,14 +41,16 @@ public class UsuarioDAO {
 
     public int readLastInsertedId(Connection connection) {
         int lastInsertedId = -1;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
 
         try {
             // Criar um preparedStatement baseado em uma string SQL:
             String selectSQL = "SELECT MAX(id) AS max_id FROM usuario";
-            PreparedStatement preparedStatement = connection.prepareStatement(selectSQL);
+            preparedStatement = connection.prepareStatement(selectSQL);
 
             // Executar o comando SQL:
-            ResultSet resultSet = preparedStatement.executeQuery();
+            resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 lastInsertedId = resultSet.getString("max_id");
             } else {
@@ -57,28 +62,30 @@ public class UsuarioDAO {
         } finally {
             resultSet.close();
             preparedStatement.close();
-            connection.close();
         }
         return lastInsertedId;
     }
 
     public Usuario read(int id) {
         Usuario usuario = null;
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
 
         try {
             // Utilizar a fábrica de conexões para criar uma Connection SQL:
             ConnectionFactory connectionFactory = new ConnectionFactory();
-            Connection connection = connectionFactory.createConnection();
+            connection = connectionFactory.createConnection();
 
             // Criar um preparedStatement baseado em uma string SQL:
             String selectSQL = "SELECT * FROM aluno WHERE id = ?";
-            PreparedStatement preparedStatement = connection.prepareStatement(selectSQL);
+            preparedStatement = connection.prepareStatement(selectSQL);
 
             // Preencher o valor do identificador no PreparedStatement:
             preparedStatement.setInt(1, id);
 
             // Executar o comando SQL:
-            ResultSet resultSet = preparedStatement.executeQuery();
+            resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 usuario = new Usuario();
                 usuario.setNome(resultSet.getString("nome"));
@@ -103,14 +110,17 @@ public class UsuarioDAO {
     }
 
     public void update(Usuario usuario) {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+
         try {
             // Utilizar a fábrica de conexões para criar uma Connection SQL:
             ConnectionFactory connectionFactory = new ConnectionFactory();
-            Connection connection = connectionFactory.createConnection();
+            connection = connectionFactory.createConnection();
 
             // Criar um preparedStatement baseado em uma string SQL:
             String updateSQL = "UPDATE aluno SET nome = ?, nascimento = ? WHERE id = ?";
-            PreparedStatement preparedStatement = connection.prepareStatement(updateSQL);
+            preparedStatement = connection.prepareStatement(updateSQL);
 
             // Preencher os valores no PreparedStatement:
             preparedStatement.setString(1, usuario.getNome());
@@ -131,14 +141,17 @@ public class UsuarioDAO {
     }
 
     public void delete(Usuario usuario) {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        
         try {
             // Utilizar a fábrica de conexões para criar uma Connection SQL:
             ConnectionFactory connectionFactory = new ConnectionFactory();
-            Connection connection = connectionFactory.createConnection();
+            connection = connectionFactory.createConnection();
 
             // Criar um preparedStatement baseado em uma string SQL:
             String deleteSQL = "DELETE FROM aluno WHERE id = ?";
-            PreparedStatement preparedStatement = connection.prepareStatement(deleteSQL);
+            preparedStatement = connection.prepareStatement(deleteSQL);
 
             // Preencher os valores no PreparedStatement:
             preparedStatement.setInt(1, usuario.getId());
