@@ -1,10 +1,45 @@
 import java.sql.SQLException;
 import java.sql.Connection;
 import java.sql.Statement;
+import java.sql.Statement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 public class UsuarioDAO {
+    public void createTable() {
+        Connection connection = null;
+        Statement statement = null;
+
+        try {
+            // Utilizar a fábrica de conexões para criar uma Connection SQL:
+            ConnectionFactory connectionFactory = new ConnectionFactory();
+            connection = connectionFactory.createConnection();
+
+            // Criar um statement baseado em uma string SQL:
+            String createTableSQL = 
+            """
+              CREATE TABLE IF NOT EXISTS usuario (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                nome VARCHAR(256) NOT NULL,
+                nascimento TEXT
+              );
+            """;
+            statement = connection.createStatement();
+            statement.execute(createTableSQL);
+            System.out.println("Tabela 'usuario' criada ou já existe!");
+        } catch (SQLException e) {
+            System.err.println("Erro na comunicação com o banco de dados!");
+            e.printStackTrace();
+        } finally {
+            try {
+                statement.close();
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     public Usuario create(Usuario usuario) {
         Connection connection = null;
         PreparedStatement preparedStatement = null;

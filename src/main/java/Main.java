@@ -3,6 +3,9 @@ public class Main {
         // Criar o DAO para conexão com o banco de dados:
         UsuarioDAO usuarioDAO = new UsuarioDAO();
 
+        //Criar a tabela usuario no banco de dados:
+        usuarioDAO.createTable();
+        
         // Criar um usuario:
         Usuario usuario = new Usuario();
         usuario.setNome("Ana");
