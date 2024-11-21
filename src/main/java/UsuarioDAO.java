@@ -55,7 +55,7 @@ public class UsuarioDAO {
             // Executar o comando SQL:
             resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
-                lastInsertedId = resultSet.getString("max_id");
+                lastInsertedId = resultSet.getInt("max_id");
             } else {
                 System.out.println("Não foi possível recuperar o último identificador gerado pelo banco de dados!");
             }
@@ -95,7 +95,7 @@ public class UsuarioDAO {
                 usuario.setNascimento(resultSet.getString("nascimento"));
                 System.out.println(
                         "\n USUÁRIO: " +
-                                "\n ID: " + usuario.getID() +
+                                "\n ID: " + usuario.getId() +
                                 "\n NOME:" + usuario.getNome() +
                                 "\n DATA DE NASCIMENTO: " + usuario.getNascimento());
             } else {
