@@ -12,7 +12,7 @@ public class Main {
         usuario = usuarioDAO.create(usuario);
 
         // Ler as informações cadastradas no banco de dados:
-        alunoDAO.read(usuario.getId());
+        usuarioDAO.read(usuario.getId());
 
         // Atualizar as informações do usuario:
         usuario.setNome("Ana Silva"); 
