@@ -63,11 +63,10 @@ public class UsuarioDAO {
             usuario.setId(readLastInsertedId(connection));
 
             System.out.println(
-                    "\n USUÁRIO: " +
-                            "\n ID: " + usuario.getId() +
-                            "\n NOME:" + usuario.getNome() +
-                            "\n DATA DE NASCIMENTO: " + usuario.getNascimento() +
-                            "\n foi gravado no banco de dados.");
+                    "USUÁRIO GRAVADO NO BANCO DE DADOS: " +
+                            "\nID: " + usuario.getId() +
+                            "\nNOME: " + usuario.getNome() +
+                            "\nDATA DE NASCIMENTO: " + usuario.getNascimento());
         } catch (SQLException e) {
             System.err.println("Erro na comunicação com o banco de dados!");
             e.printStackTrace();
@@ -142,10 +141,10 @@ public class UsuarioDAO {
                 usuario.setNome(resultSet.getString("nome"));
                 usuario.setNascimento(resultSet.getString("nascimento"));
                 System.out.println(
-                        "\n USUÁRIO: " +
-                                "\n ID: " + usuario.getId() +
-                                "\n NOME:" + usuario.getNome() +
-                                "\n DATA DE NASCIMENTO: " + usuario.getNascimento());
+                        "USUÁRIO LIDO DO BANCO DE DADOS: " +
+                                "\nID: " + usuario.getId() +
+                                "\nNOME: " + usuario.getNome() +
+                                "\nDATA DE NASCIMENTO: " + usuario.getNascimento());
             } else {
                 System.out.println("Usuário não encontrado!");
             }
