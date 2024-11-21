@@ -28,7 +28,7 @@ public class UsuarioDAO {
 
             System.out.println(
                     "\n USUÁRIO: " +
-                            "\n ID: " + usuario.getID() +
+                            "\n ID: " + usuario.getId() +
                             "\n NOME:" + usuario.getNome() +
                             "\n DATA DE NASCIMENTO: " + usuario.getNascimento() +
                             "\n foi gravado no banco de dados.");
