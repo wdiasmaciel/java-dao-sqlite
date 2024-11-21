@@ -36,8 +36,12 @@ public class UsuarioDAO {
             System.err.println("Erro na comunicação com o banco de dados!");
             e.printStackTrace();
         } finally {
-            preparedStatement.close();
-            connection.close();
+            try {
+                preparedStatement.close();
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return usuario;
     }
@@ -63,8 +67,12 @@ public class UsuarioDAO {
             System.err.println("Erro na comunicação com o banco de dados!");
             e.printStackTrace();
         } finally {
-            resultSet.close();
-            preparedStatement.close();
+            try {
+                resultSet.close();
+                preparedStatement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return lastInsertedId;
     }
@@ -105,9 +113,13 @@ public class UsuarioDAO {
             System.err.println("Erro na comunicação com o banco de dados!");
             e.printStackTrace();
         } finally {
-            resultSet.close();
-            preparedStatement.close();
-            connection.close();
+            try {
+                resultSet.close();
+                preparedStatement.close();
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return usuario;
     }
@@ -138,15 +150,19 @@ public class UsuarioDAO {
             System.err.println("Erro na comunicação com o banco de dados!");
             e.printStackTrace();
         } finally {
-            preparedStatement.close();
-            connection.close();
+            try {
+                preparedStatement.close();
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     public void delete(Usuario usuario) {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
-        
+
         try {
             // Utilizar a fábrica de conexões para criar uma Connection SQL:
             ConnectionFactory connectionFactory = new ConnectionFactory();
@@ -167,8 +183,12 @@ public class UsuarioDAO {
             System.err.println("Erro na comunicação com o banco de dados!");
             e.printStackTrace();
         } finally {
-            preparedStatement.close();
-            connection.close();
+            try {
+                preparedStatement.close();
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
