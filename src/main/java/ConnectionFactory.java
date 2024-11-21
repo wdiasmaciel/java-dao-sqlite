@@ -8,15 +8,15 @@ public class ConnectionFactory {
     public ConnectionFactory() {
     }
 
-    public Connection createConnection() throws SQLException {
+    public Connection createConnection() {
         try {
             // Conectar ao banco de dados SQLite:
-            connection = DriverManager.getConnection("jdbc:sqlite:teste.db");
+            this.connection = DriverManager.getConnection("jdbc:sqlite:teste.db");
             System.out.println("Conexão com SQLite estabelecida!");
-        } catch (ClassNotFoundException e) {
+        } catch (Exception e) {
             System.err.println("Não foi possível estabelecer conexão com SQLite!");
             e.printStackTrace();
         }
-        return connection;    
+        return this.connection;    
     }
 }
